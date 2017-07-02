@@ -500,6 +500,8 @@ class MainWindow(QMainWindow):
 		self.setStatusBar(QStatusBar(self))
 
 		menu = QMenu("&File", self)
+		menu.addAction("&Open picture file...", self.openFile)
+		menu.addSeparator()
 		menu.addAction("&Exit...", self.close)
 		self.menuBar().addMenu(menu)
 
@@ -550,6 +552,23 @@ class MainWindow(QMainWindow):
 				     xPad * 2 + 1,
 				     yPad * 2 + 1)
 		return pixmap
+
+	def loadFile(self, filename):
+		pixmap = QPixmap(str(filename))
+		if not pixmap or pixmap.isNull():
+			QMessageBox.critical(self,
+				"Failed to load file",
+				"Failed to load file:\n%s" % filename)
+			return
+		self.centralWidget().setCapturePixmap(pixmap)
+
+	def openFile(self):
+		fn, fil = QFileDialog.getOpenFileName(self,
+			"Open picture", "",
+			"All files (*)")
+		if not fn:
+			return
+		self.loadFile(fn)
 
 	def pick(self):
 		self.hide()
