@@ -360,11 +360,13 @@ class MainWidget(QWidget):
 		self.grabMouse(Qt.CrossCursor)
 		try:
 			while self.__pickActive:
-				QApplication.processEvents(QEventLoop.AllEvents, 100)
+				QApplication.processEvents(QEventLoop.AllEvents, 300)
 				m = QApplication.keyboardModifiers()
 				if m & (Qt.ControlModifier | Qt.ShiftModifier | Qt.AltModifier):
 					pos = QCursor.pos()
 					self.__endPick(pos.x(), pos.y())
+				else:
+					self.mainWindow.pick()
 		finally:
 			self.releaseMouse()
 			self.mainWindow.statusBar().showMessage("")
@@ -589,8 +591,6 @@ class MainWindow(QMainWindow):
 		self.loadFile(fn)
 
 	def pick(self):
-		self.hide()
-
 		cursorPos = QCursor.pos()
 		pixmap = self.makeCapturePixmap(cursorPos.x(), cursorPos.y())
 		self.centralWidget().setCapturePixmap(pixmap)
