@@ -21,7 +21,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-PICCOL_VERSION = "1.0"
+PICCOL_VERSION		= "1.0"
+PICCOL_HOME_URL		= "https://bues.ch/"
 
 import sys
 if sys.version_info[0] < 3:
@@ -295,13 +296,13 @@ class MainWidget(QWidget):
 		self.sliderS.setRange(0, 100)
 		colorGrid.addWidget(self.sliderS, 3, 3)
 
-		label = QLabel("Hex:", self)
+		label = QLabel("RGB-hex:", self)
 		colorGrid.addWidget(label, 4, 0)
 		self.hex = QLineEdit(self)
 		self.hex.setReadOnly(True)#TODO
 		colorGrid.addWidget(self.hex, 4, 1)
 
-		label = QLabel("Name:", self)
+		label = QLabel("Color:", self)
 		colorGrid.addWidget(label, 5, 0)
 		self.colorStr = QLineEdit(self)
 		self.colorStr.setReadOnly(True)
@@ -499,12 +500,19 @@ class MainWindow(QMainWindow):
 		self.menuBar().addMenu(menu)
 
 		menu = QMenu("&Help", self)
+		menu.addAction("Piccol &homepage...", self.homepage)
+		menu.addSeparator()
 		menu.addAction("&About...", self.about)
 		self.menuBar().addMenu(menu)
+
+	def homepage(self):
+		QDesktopServices.openUrl(QUrl(PICCOL_HOME_URL, QUrl.StrictMode))
 
 	def about(self):
 		QMessageBox.about(self, "About piccol",
 			"piccol - Color picker and translator - version %s\n"
+			"\n"
+			"%s\n"
 			"\n"
 			"Copyright 2017 Michael Büsch <m@bues.ch>\n"
 			"\n"
@@ -522,7 +530,7 @@ class MainWindow(QMainWindow):
 			"You should have received a copy of the GNU General Public License along "
 			"with this program; if not, write to the Free Software Foundation, Inc., "
 			"51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA." % (
-			PICCOL_VERSION))
+			PICCOL_VERSION, PICCOL_HOME_URL))
 
 	def makeCapturePixmap(self, globalX, globalY):
 		screen = QApplication.primaryScreen()
