@@ -112,31 +112,31 @@ class ColorString(object):
 	@property
 	def hue(self):
 		trans = self.en2en_hue
-		if self.h > 344:
+		if self.h > 344.0:
 			return trans["red"]
-		if self.h > 327:
+		if self.h > 327.0:
 			return trans["rose"]
-		if self.h > 291:
+		if self.h > 291.0:
 			return trans["magenta"]
-		if self.h > 270:
+		if self.h > 270.0:
 			return trans["purple"]
-		if self.h > 260:
+		if self.h > 260.0:
 			return trans["violet"]
-		if self.h > 240:
+		if self.h > 240.0:
 			return trans["indigo"]
-		if self.h > 193:
+		if self.h > 193.0:
 			return trans["blue"]
-		if self.h > 163:
+		if self.h > 163.0:
 			return trans["cyan"]
-		if self.h > 79:
+		if self.h > 79.0:
 			return trans["green"]
-		if self.h > 70:
+		if self.h > 70.0:
 			return trans["lime"]
-		if self.h > 45:
+		if self.h > 45.0:
 			return trans["yellow"]
-		if self.h > 15:
+		if self.h > 15.0:
 			return trans["orange"]
-		if self.h == 15:
+		if self.h > 14.0:
 			return trans["reddish"]
 		return trans["red"]
 
