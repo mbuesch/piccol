@@ -35,6 +35,8 @@ try:
 except ImportError as e:
 	havePyQt5 = False
 
+if len(sys.argv) >= 2 and sys.argv[1].lower().strip() == "--pyside":
+	havePyQt5 = False
 if havePyQt5:
 	from PyQt5.QtCore import *
 	from PyQt5.QtGui import *
