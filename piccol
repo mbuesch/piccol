@@ -238,6 +238,11 @@ class MainWidget(QWidget):
 		self.pickButton = QPushButton("Pick color...", self)
 		hbox.addWidget(self.pickButton)
 		hbox.addStretch()
+		self.onTopButton = QPushButton("S", self)
+		self.onTopButton.setToolTip("Keep window always on top (sticky)")
+		self.onTopButton.setCheckable(True)
+		self.onTopButton.setMaximumWidth(20)
+		hbox.addWidget(self.onTopButton)
 		self.layout().addLayout(hbox, 0, 0)
 
 		grid = QGridLayout()
@@ -320,6 +325,7 @@ class MainWidget(QWidget):
 		self.__selectedPixel = (0, 0)
 
 		self.pickButton.released.connect(self.__handlePick)
+		self.onTopButton.toggled.connect(self.__stickyToggled)
 		self.captureDisplay.pointerEvent.connect(self.__handleCaptureClick)
 		self.colorR.textEdited.connect(self.__handleRGBEdit)
 		self.colorG.textEdited.connect(self.__handleRGBEdit)
@@ -333,6 +339,16 @@ class MainWidget(QWidget):
 		self.sliderL.valueChanged.connect(self.__handleHLSSlide)
 		self.colorS.textEdited.connect(self.__handleHLSEdit)
 		self.sliderS.valueChanged.connect(self.__handleHLSSlide)
+
+	def __stickyToggled(self, en):
+		flags = self.mainWindow.windowFlags()
+		self.mainWindow.hide()
+		if en:
+			flags |= (Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+		else:
+			flags &= ~(Qt.CustomizeWindowHint | Qt.WindowStaysOnTopHint)
+		self.mainWindow.setWindowFlags(flags)
+		self.mainWindow.show()
 
 	def __handlePick(self):
 		self.mainWindow.statusBar().showMessage(
