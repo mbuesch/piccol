@@ -439,7 +439,10 @@ class MainWidget(QWidget):
 
 		# Draw the capture display.
 		image = self.__origCapturePixmap.toImage()
+		pen = QPen(QColor("red"))
+		pen.setWidth(1)
 		painter = QPainter(image)
+		painter.setPen(pen)
 		painter.drawLine(self.__selectedPixel[0], 0,
 				 self.__selectedPixel[0], self.__selectedPixel[1] - 2)
 		painter.drawLine(self.__selectedPixel[0], self.__selectedPixel[1] + 2,
