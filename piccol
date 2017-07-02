@@ -187,6 +187,8 @@ class ColorString(object):
 			strings = (self.lightness, )
 		elif self.s <= 0.03:
 			strings = (self.lightness, self.saturation)
+		elif self.l <= 0.09 or self.l > 0.94:
+			strings = (self.lightness, self.hue)
 		else:
 			strings = (self.saturation, self.lightness, self.hue)
 		return " ".join(s.strip() for s in strings if s.strip())
