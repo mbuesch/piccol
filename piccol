@@ -491,6 +491,7 @@ class MainWindow(QMainWindow):
 	def __init__(self):
 		QMainWindow.__init__(self)
 		self.setCentralWidget(MainWidget(self))
+		self.setWindowTitle("piccol - PICk COLors")
 
 		self.setMenuBar(QMenuBar(self))
 		self.setStatusBar(QStatusBar(self))
