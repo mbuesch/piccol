@@ -480,7 +480,9 @@ class MainWidget(QWidget):
 				self.hex.setText("#%02X%02X%02X" % (
 						 self.rgb[0], self.rgb[1], self.rgb[2]))
 			if updateStr:
-				self.colorStr.setText(colorString.string)
+				colorName = colorString.string
+				self.colorStr.setText(colorName)
+				self.colorDisplay.setToolTip(colorName)
 		finally:
 			self.__blockChangeSignals -= 1
 
