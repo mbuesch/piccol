@@ -101,7 +101,7 @@ class ColorString(object):
 	en2en_saturation = {
 		"very saturated"	: "very saturated",
 		"rather saturated"	: "rather saturated",
-		"saturated"		: "saturated",
+		""			: "",
 		"rather unsaturated"	: "rather unsaturated",
 		"unsaturated"		: "unsaturated",
 		"very unsaturated"	: "very unsaturated",
@@ -169,7 +169,7 @@ class ColorString(object):
 		if self.s > 0.8:
 			return trans["rather saturated"]
 		if self.s > 0.6:
-			return trans["saturated"]
+			return trans[""]
 		if self.s > 0.46:
 			return trans["rather unsaturated"]
 		if self.s > 0.3:
