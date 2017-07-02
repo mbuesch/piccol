@@ -440,9 +440,15 @@ class MainWidget(QWidget):
 		image = self.__origCapturePixmap.toImage()
 		painter = QPainter(image)
 		painter.drawLine(self.__selectedPixel[0], 0,
+				 self.__selectedPixel[0], self.__selectedPixel[1] - 2)
+		painter.drawLine(self.__selectedPixel[0], self.__selectedPixel[1] + 2,
 				 self.__selectedPixel[0], image.height() - 1)
 		painter.drawLine(0, self.__selectedPixel[1],
+				 self.__selectedPixel[0] - 2, self.__selectedPixel[1])
+		painter.drawLine(self.__selectedPixel[0] + 2, self.__selectedPixel[1],
 				 image.width() - 1, self.__selectedPixel[1])
+		painter.drawRect(self.__selectedPixel[0] - 2, self.__selectedPixel[1] - 2,
+				 4, 4)
 		painter.end()
 		self.captureDisplay.setPixmap(QPixmap.fromImage(image))
 
