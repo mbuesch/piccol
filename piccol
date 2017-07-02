@@ -186,7 +186,7 @@ class ColorString(object):
 		strings = ()
 		if self.l <= 0.0 or self.l >= 1.0:
 			strings = (self.lightness, )
-		if self.s <= 0.03:
+		elif self.s <= 0.03:
 			strings = (self.lightness, self.saturation)
 		else:
 			strings = (self.saturation, self.lightness, self.hue)
