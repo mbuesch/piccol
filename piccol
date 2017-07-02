@@ -193,7 +193,7 @@ class ColorString(object):
 		return " ".join(s.strip() for s in strings if s.strip())
 
 class PixmapDisplay(QLabel):
-	rgbSelected = Signal(int, int, int)
+	pointerEvent = Signal(int, int)
 
 	def __init__(self, parent=None):
 		QLabel.__init__(self, parent)
@@ -224,10 +224,7 @@ class PixmapDisplay(QLabel):
 		if pixmap and\
 		   x >= 0 and y >= 0 and\
 		   x < pixmap.width() and y < pixmap.height():
-			image = pixmap.toImage()
-			pix = image.pixel(x, y)
-			r, g, b = qRed(pix), qGreen(pix), qBlue(pix)
-			self.rgbSelected.emit(r, g, b)
+			self.pointerEvent.emit(x, y)
 
 class MainWidget(QWidget):
 	def __init__(self, mainWindow):
@@ -318,9 +315,11 @@ class MainWidget(QWidget):
 
 		self.__blockChangeSignals = 0
 		self.__pickActive = False
+		self.__origCapturePixmap = QPixmap()
+		self.__selectedPixel = (0, 0)
 
 		self.pickButton.released.connect(self.__handlePick)
-		self.captureDisplay.rgbSelected.connect(self.__handleCaptureClick)
+		self.captureDisplay.pointerEvent.connect(self.__handleCaptureClick)
 		self.colorR.textEdited.connect(self.__handleRGBEdit)
 		self.colorG.textEdited.connect(self.__handleRGBEdit)
 		self.colorB.textEdited.connect(self.__handleRGBEdit)
@@ -363,20 +362,21 @@ class MainWidget(QWidget):
 		QWidget.mousePressEvent(self, event)
 
 	def setCapturePixmap(self, pixmap):
-		self.captureDisplay.setPixmap(pixmap)
+		self.__origCapturePixmap = pixmap
+		self.__selectCapturePixel(pixmap.width() // 2,
+					  pixmap.height() // 2)
 
-		image = pixmap.toImage()
-		pix = image.pixel(image.width() // 2,
-				  image.height() // 2)
+	def __selectCapturePixel(self, x, y):
+		self.__selectedPixel = (x, y)
+		image = self.__origCapturePixmap.toImage()
+		pix = image.pixel(x, y)
 		self.rgb = qRed(pix), qGreen(pix), qBlue(pix)
-
 		self.__update()
 
-	def __handleCaptureClick(self, r, g, b):
+	def __handleCaptureClick(self, x, y):
 		if self.__blockChangeSignals:
 			return
-		self.rgb = (r, g, b)
-		self.__update()
+		self.__selectCapturePixel(x, y)
 
 	def __convRGB(self, text):
 		value = int(text)
@@ -435,6 +435,18 @@ class MainWidget(QWidget):
 			   updateHLSText=True, updateHLSSlider=True,
 			   updateHex=True,
 			   updateStr=True):
+
+		# Draw the capture display.
+		image = self.__origCapturePixmap.toImage()
+		painter = QPainter(image)
+		painter.drawLine(self.__selectedPixel[0], 0,
+				 self.__selectedPixel[0], image.height() - 1)
+		painter.drawLine(0, self.__selectedPixel[1],
+				 image.width() - 1, self.__selectedPixel[1])
+		painter.end()
+		self.captureDisplay.setPixmap(QPixmap.fromImage(image))
+
+		# Draw the color display.
 		image = QImage(64, 64, QImage.Format_RGB32)
 		image.fill(QColor(*self.rgb))
 		self.colorDisplay.setPixmap(QPixmap.fromImage(image))
