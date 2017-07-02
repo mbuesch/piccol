@@ -31,20 +31,18 @@ if sys.version_info[0] < 3:
 import colorsys
 
 try:
-	raise ImportError #TODO
-	import PySide.QtCore as __PySideQtCore
-	pySide = True
+	import PyQt5.QtCore as havePyQt5
 except ImportError as e:
-	pySide = False
+	havePyQt5 = False
 
-if pySide:
-	from PySide.QtCore import *
-	from PySide.QtGui import *
-else:
+if havePyQt5:
 	from PyQt5.QtCore import *
 	from PyQt5.QtGui import *
 	from PyQt5.QtWidgets import *
 	Signal = pyqtSignal
+else:
+	from PySide.QtCore import *
+	from PySide.QtGui import *
 
 
 class ColorString(object):
@@ -537,11 +535,14 @@ class MainWindow(QMainWindow):
 			PICCOL_VERSION, PICCOL_HOME_URL))
 
 	def makeCapturePixmap(self, globalX, globalY):
-		screen = QApplication.primaryScreen()
+		if hasattr(QApplication, "primaryScreen"):
+			screen = QApplication.primaryScreen()
+			pixmap = screen.grabWindow(0)
+		else:
+			winId = QApplication.desktop().winId()
+			pixmap = QPixmap.grabWindow(winId)
 
 		xPad = yPad = 100
-
-		pixmap = screen.grabWindow(0)
 		pixmap = pixmap.copy(globalX - xPad,
 				     globalY - yPad,
 				     xPad * 2 + 1,
