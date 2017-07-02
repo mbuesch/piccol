@@ -155,7 +155,7 @@ class ColorString(object):
 			return trans[""]
 		if self.l > 0.22:
 			return trans["dark"]
-		if self.l > 0.9:
+		if self.l > 0.09:
 			return trans["very dark"]
 		if self.l > 0.0:
 			return trans["almost black"]
