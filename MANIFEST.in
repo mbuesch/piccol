@@ -1,5 +1,6 @@
 graft foreign-licenses
 include COPYING
+include piccol.cmd
 include README.md
 include README.html
 include win-standalone-build.cmd
