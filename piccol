@@ -21,13 +21,29 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
+PICCOL_VERSION = "1.0"
+
 import sys
+if sys.version_info[0] < 3:
+	raise Exception("Python 3.x is required.")
+
 import colorsys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-Signal = pyqtSignal
+try:
+	raise ImportError #TODO
+	import PySide.QtCore as __PySideQtCore
+	pySide = True
+except ImportError as e:
+	pySide = False
+
+if pySide:
+	from PySide.QtCore import *
+	from PySide.QtGui import *
+else:
+	from PyQt5.QtCore import *
+	from PyQt5.QtGui import *
+	from PyQt5.QtWidgets import *
+	Signal = pyqtSignal
 
 
 class ColorString(object):
@@ -182,8 +198,7 @@ class PixmapDisplay(QLabel):
 	def __init__(self, parent=None):
 		QLabel.__init__(self, parent)
 
-		self.setFrameShadow(QFrame.Sunken)
-		self.setFrameShape(QFrame.Panel)
+		self.setFrameStyle(QFrame.Box | QFrame.Raised)
 		self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 		self.setMouseTracking(True)
 
@@ -229,6 +244,7 @@ class MainWidget(QWidget):
 
 		grid = QGridLayout()
 		self.captureDisplay = PixmapDisplay(self)
+		self.captureDisplay.setToolTip("Click here to select pixel.")
 		grid.addWidget(self.captureDisplay, 0, 0, 2, 1)
 		self.colorDisplay = PixmapDisplay(self)
 		grid.addWidget(self.colorDisplay, 0, 1, 1, 1)
@@ -319,21 +335,31 @@ class MainWidget(QWidget):
 		self.sliderS.valueChanged.connect(self.__handleHLSSlide)
 
 	def __handlePick(self):
+		self.mainWindow.statusBar().showMessage(
+			"Use mouse to capture screen area. "
+			"Press Ctrl, Shift or Alt to capture.")
 		self.__pickActive = True
 		self.grabMouse(Qt.CrossCursor)
 		try:
 			while self.__pickActive:
 				QApplication.processEvents(QEventLoop.AllEvents, 100)
+				m = QApplication.keyboardModifiers()
+				if m & (Qt.ControlModifier | Qt.ShiftModifier | Qt.AltModifier):
+					pos = QCursor.pos()
+					self.__endPick(pos.x(), pos.y())
 		finally:
 			self.releaseMouse()
+			self.mainWindow.statusBar().showMessage("")
 			self.mainWindow.show()
+
+	def __endPick(self, x, y):
+		self.__pickActive = False
+		pixmap = self.mainWindow.makeCapturePixmap(x, y)
+		self.setCapturePixmap(pixmap)
 
 	def mousePressEvent(self, event):
 		if self.__pickActive:
-			self.__pickActive = False
-			x, y = event.globalX(), event.globalY()
-			pixmap = self.mainWindow.makeCapturePixmap(x, y)
-			self.setCapturePixmap(pixmap)
+			self.__endPick(event.globalX(), event.globalY())
 		QWidget.mousePressEvent(self, event)
 
 	def setCapturePixmap(self, pixmap):
@@ -445,8 +471,41 @@ class MainWindow(QMainWindow):
 		QMainWindow.__init__(self)
 		self.setCentralWidget(MainWidget(self))
 
+		self.setMenuBar(QMenuBar(self))
+		self.setStatusBar(QStatusBar(self))
+
+		menu = QMenu("&File", self)
+		menu.addAction("&Exit...", self.close)
+		self.menuBar().addMenu(menu)
+
+		menu = QMenu("&Help", self)
+		menu.addAction("&About...", self.about)
+		self.menuBar().addMenu(menu)
+
+	def about(self):
+		QMessageBox.about(self, "About piccol",
+			"piccol - Color picker and translator - version %s\n"
+			"\n"
+			"Copyright 2017 Michael Büsch <m@bues.ch>\n"
+			"\n"
+			"\n"
+			"This program is free software; you can redistribute it and/or modify "
+			"it under the terms of the GNU General Public License as published by "
+			"the Free Software Foundation; either version 2 of the License, or "
+			"(at your option) any later version.\n"
+			"\n"
+			"This program is distributed in the hope that it will be useful, "
+			"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+			"GNU General Public License for more details.\n"
+			"\n"
+			"You should have received a copy of the GNU General Public License along "
+			"with this program; if not, write to the Free Software Foundation, Inc., "
+			"51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA." % (
+			PICCOL_VERSION))
+
 	def makeCapturePixmap(self, globalX, globalY):
-		screen = QGuiApplication.primaryScreen()
+		screen = QApplication.primaryScreen()
 
 		xPad = yPad = 100
 
