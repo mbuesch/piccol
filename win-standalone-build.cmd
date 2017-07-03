@@ -1,6 +1,8 @@
 @echo off
-
 setlocal ENABLEDELAYEDEXPANSION
+
+set project=piccol
+
 
 set PATH=%PATH%;C:\WINDOWS;C:\WINDOWS\SYSTEM32
 for /D %%f in ( "C:\PYTHON*" ) do set PATH=!PATH!;%%f
@@ -8,10 +10,12 @@ for /D %%f in ( "%USERPROFILE%\AppData\Local\Programs\Python\Python*" ) do set P
 set PATH=%PATH%;%ProgramFiles%\7-Zip
 
 
-set version=0.1
+py -c "import re; print(re.match(r'.*^\s*PICCOL_VERSION\s*=\s*\"([\w\d\.\-_]+)\"\s*$.*', open('piccol').read(), re.DOTALL | re.MULTILINE).group(1))" > version.txt
+if ERRORLEVEL 1 goto error_version
+set /p version= < version.txt
+del version.txt
 
 
-set project=piccol
 set distdir=%project%-win64-standalone-%version%
 set sfxfile=%project%-win64-%version%.package.exe
 set bindirname=%project%-bin
@@ -125,6 +129,10 @@ mkdir %bindir%
 if ERRORLEVEL 1 goto error_prep
 exit /B 0
 
+
+:error_version
+echo FAILED to detect version
+goto error
 
 :error_prep
 echo FAILED to prepare environment
