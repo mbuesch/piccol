@@ -363,8 +363,7 @@ class MainWidget(QWidget):
 				QApplication.processEvents(QEventLoop.AllEvents, 300)
 				m = QApplication.keyboardModifiers()
 				if m & (Qt.ControlModifier | Qt.ShiftModifier | Qt.AltModifier):
-					pos = QCursor.pos()
-					self.__endPick(pos.x(), pos.y())
+					self.__endPick()
 				else:
 					self.mainWindow.pick()
 		finally:
@@ -372,14 +371,14 @@ class MainWidget(QWidget):
 			self.mainWindow.statusBar().showMessage("")
 			self.mainWindow.show()
 
-	def __endPick(self, x, y):
+	def __endPick(self):
 		self.__pickActive = False
-		pixmap = self.mainWindow.makeCapturePixmap(x, y)
+		pixmap = MainWindow.makeCapturePixmap()
 		self.setCapturePixmap(pixmap)
 
 	def mousePressEvent(self, event):
 		if self.__pickActive:
-			self.__endPick(event.globalX(), event.globalY())
+			self.__endPick()
 		QWidget.mousePressEvent(self, event)
 
 	def setCapturePixmap(self, pixmap):
@@ -558,17 +557,24 @@ class MainWindow(QMainWindow):
 			"51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA." % (
 			PICCOL_VERSION, PICCOL_HOME_URL))
 
-	def makeCapturePixmap(self, globalX, globalY):
+	@staticmethod
+	def makeCapturePixmap():
 		if hasattr(QApplication, "primaryScreen"):
 			screen = QApplication.primaryScreen()
+			cursorPos = QCursor.pos()
 			pixmap = screen.grabWindow(0)
+			x, y = cursorPos.x(), cursorPos.y()
 		else:
-			winId = QApplication.desktop().winId()
+			desktop = QApplication.desktop()
+			cursorPos = QCursor.pos()
+			winId = desktop.winId()
 			pixmap = QPixmap.grabWindow(winId)
+			cursorPos = desktop.mapFromGlobal(cursorPos)
+			x, y = cursorPos.x(), cursorPos.y()
 
 		xPad = yPad = 100
-		pixmap = pixmap.copy(globalX - xPad,
-				     globalY - yPad,
+		pixmap = pixmap.copy(x - xPad,
+				     y - yPad,
 				     xPad * 2 + 1,
 				     yPad * 2 + 1)
 		return pixmap
@@ -591,8 +597,7 @@ class MainWindow(QMainWindow):
 		self.loadFile(fn)
 
 	def pick(self):
-		cursorPos = QCursor.pos()
-		pixmap = self.makeCapturePixmap(cursorPos.x(), cursorPos.y())
+		pixmap = self.makeCapturePixmap()
 		self.centralWidget().setCapturePixmap(pixmap)
 
 		self.show()
