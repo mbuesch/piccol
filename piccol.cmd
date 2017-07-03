@@ -6,6 +6,8 @@ set PYPROG=piccol
 set PATH=%PATH%;C:\WINDOWS;C:\WINDOWS\SYSTEM32
 for /D %%f in ( "C:\PYTHON*" ) do set PATH=!PATH!;%%f
 for /D %%f in ( "%USERPROFILE%\AppData\Local\Programs\Python\Python*" ) do set PATH=!PATH!;%%f;%%f\Scripts
+for /D %%f in ( "%PROGRAMFILES%\Anaconda3" ) do set PATH=!PATH!;%%f
+for /D %%f in ( "%PROGRAMFILES(X86)%\Anaconda3" ) do set PATH=!PATH!;%%f
 for /D %%f in ( "%PROGRAMFILES%\Anaconda" ) do set PATH=!PATH!;%%f
 for /D %%f in ( "%PROGRAMFILES(X86)%\Anaconda" ) do set PATH=!PATH!;%%f
 
