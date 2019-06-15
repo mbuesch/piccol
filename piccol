@@ -4,7 +4,7 @@
 #
 # piccol - PICk COLors
 #
-# Copyright 2017 Michael Buesch <m@bues.ch>
+# Copyright 2017-2019 Michael Buesch <m@bues.ch>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-PICCOL_VERSION		= "1.0"
+PICCOL_VERSION		= "1.1"
 PICCOL_HOME_URL		= "https://bues.ch/"
 
 import sys
@@ -210,11 +210,9 @@ class PixmapDisplay(QLabel):
 	def mousePressEvent(self, event):
 		self.__handlePointerEvent(event.x(), event.y())
 		self.__buttonPressed = True
-		QLabel.mousePressEvent(self, event)
 
 	def mouseReleaseEvent(self, event):
 		self.__handlePointerEvent(event.x(), event.y())
-		QLabel.mouseReleaseEvent(self, event)
 		self.__buttonPressed = False
 
 	def mouseMoveEvent(self, event):
