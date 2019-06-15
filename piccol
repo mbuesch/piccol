@@ -43,8 +43,9 @@ if havePyQt5:
 	from PyQt5.QtWidgets import *
 	Signal = pyqtSignal
 else:
-	from PySide.QtCore import *
-	from PySide.QtGui import *
+	from PySide2.QtCore import *
+	from PySide2.QtGui import *
+	from PySide2.QtWidgets import *
 
 
 class ColorString(object):
@@ -371,18 +372,20 @@ class MainWidget(QWidget):
 
 	def __endPick(self):
 		self.__pickActive = False
-		pixmap = MainWindow.makeCapturePixmap()
-		self.setCapturePixmap(pixmap)
+		pixmap, hotSpot = MainWindow.makeCapturePixmap()
+		self.setCapturePixmap(pixmap, hotSpot)
 
 	def mousePressEvent(self, event):
 		if self.__pickActive:
 			self.__endPick()
 		QWidget.mousePressEvent(self, event)
 
-	def setCapturePixmap(self, pixmap):
+	def setCapturePixmap(self, pixmap, hotSpot=None):
 		self.__origCapturePixmap = pixmap
-		self.__selectCapturePixel(pixmap.width() // 2,
-					  pixmap.height() // 2)
+		if hotSpot is None:
+			hotSpot = (pixmap.width() // 2,
+				   pixmap.height() // 2)
+		self.__selectCapturePixel(hotSpot[0], hotSpot[1])
 
 	def __selectCapturePixel(self, x, y):
 		self.__selectedPixel = (x, y)
@@ -537,7 +540,7 @@ class MainWindow(QMainWindow):
 			"\n"
 			"%s\n"
 			"\n"
-			"Copyright 2017 Michael Büsch <m@bues.ch>\n"
+			"Copyright Michael Büsch <m@bues.ch>\n"
 			"\n"
 			"\n"
 			"This program is free software; you can redistribute it and/or modify "
@@ -557,25 +560,41 @@ class MainWindow(QMainWindow):
 
 	@staticmethod
 	def makeCapturePixmap():
-		if hasattr(QApplication, "primaryScreen"):
-			screen = QApplication.primaryScreen()
-			cursorPos = QCursor.pos()
-			pixmap = screen.grabWindow(0)
-			x, y = cursorPos.x(), cursorPos.y()
-		else:
-			desktop = QApplication.desktop()
-			cursorPos = QCursor.pos()
-			winId = desktop.winId()
-			pixmap = QPixmap.grabWindow(winId)
-			cursorPos = desktop.mapFromGlobal(cursorPos)
-			x, y = cursorPos.x(), cursorPos.y()
+		cursorPos = QCursor.pos()
+		x, y = cursorPos.x(), cursorPos.y()
 
-		xPad = yPad = 100
-		pixmap = pixmap.copy(x - xPad,
-				     y - yPad,
-				     xPad * 2 + 1,
-				     yPad * 2 + 1)
-		return pixmap
+		# Make screen shot.
+		mouseScreen = QGuiApplication.screenAt(cursorPos)
+		pixmap = mouseScreen.grabWindow(0)
+
+		# Translate X/Y to screen corrdinates.
+		screenGeo = mouseScreen.geometry()
+		x -= screenGeo.x()
+		y -= screenGeo.y()
+
+		# Calculate the section pixmap position.
+		pixSize = (200, 200)
+		padding = (pixSize[0] // 2, pixSize[1] // 2)
+		pixPos = [x - padding[0], y - padding[1]]
+
+		# Calculate the pixmap hot spot position.
+		hotSpot = list(padding)
+		for i in (0, 1):
+			if pixPos[i] < 0:
+				hotSpot[i] += pixPos[i]
+				pixPos[i] = 0
+			s = screenGeo.width() if i == 0 else screenGeo.height()
+			over = s - (pixPos[i] + pixSize[i])
+			if over < 0:
+				pixPos[i] = s - pixSize[i] - 1
+				hotSpot[i] -= over
+
+		# Get the section pixmap.
+		pixmap = pixmap.copy(pixPos[0],
+				     pixPos[1],
+				     pixSize[0],
+				     pixSize[1])
+		return pixmap, hotSpot
 
 	def loadFile(self, filename):
 		pixmap = QPixmap(str(filename))
@@ -595,8 +614,8 @@ class MainWindow(QMainWindow):
 		self.loadFile(fn)
 
 	def pick(self):
-		pixmap = self.makeCapturePixmap()
-		self.centralWidget().setCapturePixmap(pixmap)
+		pixmap, hotSpot = self.makeCapturePixmap()
+		self.centralWidget().setCapturePixmap(pixmap, hotSpot)
 
 		self.show()
 
