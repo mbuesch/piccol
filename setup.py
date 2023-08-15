@@ -4,38 +4,20 @@ import os
 import re
 from distutils.core import setup
 try:
-	import py2exe
-except ImportError as e:
-	py2exe = None
-try:
-	if py2exe and "py2exe" in sys.argv:
-		raise ImportError
 	from cx_Freeze import setup, Executable
 	cx_Freeze = True
 except ImportError as e:
 	cx_Freeze = False
 
-
-isWindows = os.name.lower() in {"nt", "ce"}
+isWindows = os.name.lower() == "nt"
 
 extraKeywords = {}
-
-# Workaround for mbcs codec bug in distutils
-# http://bugs.python.org/issue10945
-import codecs
-try:
-	codecs.lookup("mbcs")
-except LookupError:
-	codecs.register(lambda name: codecs.lookup("ascii") if name == "mbcs" else None)
-
 
 # Create freeze executable list.
 guiBase = None
 if isWindows:
 	guiBase = "Win32GUI"
 freezeExecutables = [ ("piccol", None, guiBase), ]
-if py2exe:
-	extraKeywords["console"] = [ s for s, e, b in freezeExecutables ]
 if cx_Freeze:
 	executables = []
 	for script, exe, base in freezeExecutables:
@@ -63,11 +45,12 @@ if m:
 	version = m.group(1)
 print("piccol version %s" % version)
 
-setup(	name		= "piccol",
+setup(
+	name		= "piccol",
 	version		= version,
 	description	= "Color picker and translator",
 	license		= "GNU General Public License v2 or later",
-	author		= "Michael Buesch",
+	author		= "Michael Büsch",
 	author_email	= "m@bues.ch",
 	url		= "https://bues.ch/",
 	scripts		= [ "piccol", ],
