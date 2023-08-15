@@ -95,116 +95,73 @@ class ColorString(object):
 		self.l = l
 		self.s = s
 
-	en2en_hue = {
-		"red"		: "red",
-		"rose"		: "rose",
-		"magenta"	: "magenta",
-		"purple"	: "purple",
-		"violet"	: "violet",
-		"indigo"	: "indigo",
-		"blue"		: "blue",
-		"cyan"		: "cyan",
-		"green"		: "green",
-		"lime"		: "lime",
-		"yellow"	: "yellow",
-		"orange"	: "orange",
-		"reddish"	: "reddish",
-		"red"		: "red",
-	}
-
-	en2en_lightness = {
-		"white"		: "white",
-		"almost white"	: "almost white",
-		"very light"	: "very light",
-		"light"		: "light",
-		""		: "",
-		"dark"		: "dark",
-		"very dark"	: "very dark",
-		"almost black"	: "almost black",
-		"black"		: "black",
-	}
-
-	en2en_saturation = {
-		"very saturated"	: "very saturated",
-		"rather saturated"	: "rather saturated",
-		""			: "",
-		"rather unsaturated"	: "rather unsaturated",
-		"unsaturated"		: "unsaturated",
-		"very unsaturated"	: "very unsaturated",
-		"almost grey"		: "almost grey",
-		"grey"			: "grey",
-	}
-
 	@property
 	def hue(self):
-		trans = self.en2en_hue
 		if self.h > 344.0:
-			return trans["red"]
+			return "red"
 		if self.h > 327.0:
-			return trans["rose"]
+			return "rose"
 		if self.h > 291.0:
-			return trans["magenta"]
+			return "magenta"
 		if self.h > 270.0:
-			return trans["purple"]
+			return "purple"
 		if self.h > 260.0:
-			return trans["violet"]
+			return "violet"
 		if self.h > 240.0:
-			return trans["indigo"]
+			return "indigo"
 		if self.h > 193.0:
-			return trans["blue"]
+			return "blue"
 		if self.h > 163.0:
-			return trans["cyan"]
+			return "cyan"
 		if self.h > 79.0:
-			return trans["green"]
+			return "green"
 		if self.h > 70.0:
-			return trans["lime"]
+			return "lime"
 		if self.h > 45.0:
-			return trans["yellow"]
+			return "yellow"
 		if self.h > 15.0:
-			return trans["orange"]
+			return "orange"
 		if self.h > 14.0:
-			return trans["reddish"]
-		return trans["red"]
+			return "reddish"
+		return "red"
 
 	@property
 	def lightness(self):
-		trans = self.en2en_lightness
 		if self.l >= 1.0:
-			return trans["white"]
+			return "white"
 		if self.l > 0.94:
-			return trans["almost white"]
+			return "almost white"
 		if self.l > 0.8:
-			return trans["very light"]
+			return "very light"
 		if self.l > 0.6:
-			return trans["light"]
+			return "light"
 		if self.l > 0.3:
-			return trans[""]
+			return ""
 		if self.l > 0.22:
-			return trans["dark"]
+			return "dark"
 		if self.l > 0.09:
-			return trans["very dark"]
+			return "very dark"
 		if self.l > 0.0:
-			return trans["almost black"]
-		return trans["black"]
+			return "almost black"
+		return "black"
 
 	@property
 	def saturation(self):
-		trans = self.en2en_saturation
 		if self.s > 0.9:
-			return trans["very saturated"]
+			return "very saturated"
 		if self.s > 0.8:
-			return trans["rather saturated"]
+			return "rather saturated"
 		if self.s > 0.6:
-			return trans[""]
+			return ""
 		if self.s > 0.46:
-			return trans["rather unsaturated"]
+			return "rather unsaturated"
 		if self.s > 0.3:
-			return trans["unsaturated"]
+			return "unsaturated"
 		if self.s > 0.1:
-			return trans["very unsaturated"]
+			return "very unsaturated"
 		if self.s > 0.03:
-			return trans["almost grey"]
-		return trans["grey"]
+			return "almost grey"
+		return "grey"
 
 	@property
 	def string(self):
