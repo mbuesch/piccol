@@ -1,44 +1,18 @@
 @echo off
-rem
-rem Windows frozen package build script
-rem
-rem Copyright 2012-2019 Michael Buesch <m@bues.ch>
-rem
-rem This program is free software; you can redistribute it and/or modify
-rem it under the terms of the GNU General Public License as published by
-rem the Free Software Foundation; either version 2 of the License, or
-rem (at your option) any later version.
-rem
-rem This program is distributed in the hope that it will be useful,
-rem but WITHOUT ANY WARRANTY; without even the implied warranty of
-rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-rem GNU General Public License for more details.
-rem
-rem You should have received a copy of the GNU General Public License along
-rem with this program; if not, write to the Free Software Foundation, Inc.,
-rem 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-rem
 setlocal ENABLEDELAYEDEXPANSION
 
 set project=piccol
 
 set PATH=%PATH%;C:\WINDOWS;C:\WINDOWS\SYSTEM32
-for /D %%f in ( "C:\PYTHON*" ) do set PATH=!PATH!;%%f
 for /D %%f in ( "%USERPROFILE%\AppData\Local\Programs\Python\Python*" ) do set PATH=!PATH!;%%f;%%f\Scripts
 set PATH=%PATH%;%ProgramFiles%\7-Zip
 
 
 call :detect_version
-if "%PROCESSOR_ARCHITECTURE%" == "x86" (
-	set winprefix=win32
-) else (
-	set winprefix=win64
-)
-set distdir=%project%-%winprefix%-standalone-%version%
-set sfxfile=%project%-%winprefix%-%version%.package.exe
+set distdir=%project%-win64-standalone-%version%
+set sfxfile=%project%-win64-%version%.package.exe
 set bindirname=%project%-bin
 set bindir=%distdir%\%bindirname%
-set builddir=%bindir%\build
 set licensedirname=licenses
 set licensedir=%distdir%\%licensedirname%
 
@@ -81,11 +55,7 @@ exit /B 0
 
 :build_cxfreeze
 	echo === Creating the cx_Freeze distribution
-	py setup.py ^
-		build ^
-		--build-base=%builddir% ^
-		build_exe ^
-		--build-exe=%bindir%
+	py setup.py build build_exe --build-exe=%bindir%
 	if ERRORLEVEL 1 goto error_exe
 	exit /B 0
 
