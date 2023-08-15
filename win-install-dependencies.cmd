@@ -7,9 +7,7 @@ for /D %%f in ( "C:\PYTHON*" ) do set PATH=!PATH!;%%f
 for /D %%f in ( "%USERPROFILE%\AppData\Local\Programs\Python\Python*" ) do set PATH=!PATH!;%%f;%%f\Scripts
 
 
-call :install PyQt5_sip
-if ERRORLEVEL 1 exit /B 1
-call :install PyQt5
+call :install PyQt6
 if ERRORLEVEL 1 exit /B 1
 call :install cx_Freeze
 if ERRORLEVEL 1 exit /B 1
