@@ -21,7 +21,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-PICCOL_VERSION		= "1.1"
+PICCOL_VERSION		= "1.2"
 PICCOL_HOME_URL		= "https://bues.ch/"
 
 import sys
