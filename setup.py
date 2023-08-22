@@ -57,6 +57,8 @@ setup(
 	url		= "https://bues.ch/",
 	scripts		= [ "piccol", ],
 	keywords	= [ "color", "RGB", "HLS", "HSL", ],
+	install_requires = [ "PyQt6", ],
+	python_requires	= ">=3.7",
 	classifiers	= [
 		"Development Status :: 5 - Production/Stable",
 		"Environment :: Win32 (MS Windows)",
