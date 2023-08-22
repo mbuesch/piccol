@@ -3,7 +3,11 @@ piccol - PICk COLors
 
 Color picker and translator.
 
-[https://bues.ch/](https://bues.ch/)
+[Homepage](https://bues.ch/)
+
+[Git repository](https://bues.ch/cgit/piccol.git)
+
+[Github repository](https://github.com/mbuesch/piccol)
 
 License / Copyright
 -------------------
