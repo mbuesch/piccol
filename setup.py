@@ -2,6 +2,7 @@
 
 import os
 import re
+from pathlib import Path
 from distutils.core import setup
 try:
 	from cx_Freeze import setup, Executable
@@ -9,46 +10,43 @@ try:
 except ImportError as e:
 	cx_Freeze = False
 
+basedir = Path(__file__).parent.absolute()
+
 isWindows = os.name.lower() == "nt"
 
 extraKeywords = {}
 
 # Create freeze executable list.
-guiBase = None
-if isWindows:
-	guiBase = "Win32GUI"
-freezeExecutables = [ ("piccol", None, guiBase), ]
+freezeExecutables = [ ("piccol", "Win32GUI" if isWindows else None), ]
 if cx_Freeze:
 	executables = []
-	for script, exe, base in freezeExecutables:
-		if exe:
-			if isWindows:
-				exe += ".exe"
-			executables.append(Executable(script = script,
-						      targetName = exe,
-						      base = base))
-		else:
-			executables.append(Executable(script = script,
-						      base = base))
+	for script, base in freezeExecutables:
+		executables.append(Executable(script=script,
+					      base=base))
 	extraKeywords["executables"] = executables
 	extraKeywords["options"] = {
-			"build_exe"     : {
-				"packages"      : [ ],
-				"excludes"	: [
-					"PyQt5.QtCore", "PyQt5.QtGui", "PyQt5.QtWidgets",
-					"PySide2.QtCore", "PySide2.QtGui", "PySide2.QtWidgets",
-					"tkinter",
-				],
-			}
+		"build_exe" : {
+			"packages" : [],
+			"excludes" : [
+				"PyQt5.QtCore", "PyQt5.QtGui", "PyQt5.QtWidgets",
+				"PySide2.QtCore", "PySide2.QtGui", "PySide2.QtWidgets",
+				"tkinter",
+			],
 		}
+	}
 
-version = "unknown_version"
-m = re.match(r'.*^\s*PICCOL_VERSION\s*=\s*"([\w\d\.\-_]+)"\s*$.*',
-	     open("piccol").read(),
-	     re.DOTALL | re.MULTILINE)
-if m:
+# Get version.
+with open(basedir / "piccol", "rb") as fd:
+	m = re.match(r'.*^\s*PICCOL_VERSION\s*=\s*"([\w\d\.\-_]+)"\s*$.*',
+		     fd.read().decode("UTF-8"),
+		     re.DOTALL | re.MULTILINE)
+	assert m
 	version = m.group(1)
 print("piccol version %s" % version)
+
+# Get readme text.
+with open(basedir / "README.md", "rb") as fd:
+	readmeText = fd.read().decode("UTF-8")
 
 setup(
 	name		= "piccol",
@@ -82,6 +80,7 @@ setup(
 		"Topic :: Scientific/Engineering",
 		"Topic :: Software Development",
 	],
-	long_description = open("README.md").read(),
+	long_description=readmeText,
+	long_description_content_type="text/markdown",
 	**extraKeywords
 )
