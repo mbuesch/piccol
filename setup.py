@@ -34,6 +34,11 @@ if cx_Freeze:
 	extraKeywords["options"] = {
 			"build_exe"     : {
 				"packages"      : [ ],
+				"excludes"	: [
+					"PyQt5.QtCore", "PyQt5.QtGui", "PyQt5.QtWidgets",
+					"PySide2.QtCore", "PySide2.QtGui", "PySide2.QtWidgets",
+					"tkinter",
+				],
 			}
 		}
 
