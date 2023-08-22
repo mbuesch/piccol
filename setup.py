@@ -3,7 +3,7 @@
 import os
 import re
 from pathlib import Path
-from distutils.core import setup
+from setuptools import setup
 try:
 	from cx_Freeze import setup, Executable
 	cx_Freeze = True
