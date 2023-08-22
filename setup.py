@@ -17,13 +17,11 @@ isWindows = os.name.lower() == "nt"
 extraKeywords = {}
 
 # Create freeze executable list.
-freezeExecutables = [ ("piccol", "Win32GUI" if isWindows else None), ]
 if cx_Freeze:
-	executables = []
-	for script, base in freezeExecutables:
-		executables.append(Executable(script=script,
-					      base=base))
-	extraKeywords["executables"] = executables
+	extraKeywords["executables"] = [
+		Executable(script="piccol",
+			   base=("Win32GUI" if isWindows else None)),
+	]
 	extraKeywords["options"] = {
 		"build_exe" : {
 			"packages" : [],
@@ -31,8 +29,9 @@ if cx_Freeze:
 				"PyQt5.QtCore", "PyQt5.QtGui", "PyQt5.QtWidgets",
 				"PySide2.QtCore", "PySide2.QtGui", "PySide2.QtWidgets",
 				"tkinter",
+				"test", "unittest",
 			],
-		}
+		},
 	}
 
 # Get version.
