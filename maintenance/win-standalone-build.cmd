@@ -8,6 +8,10 @@ for /D %%f in ( "%USERPROFILE%\AppData\Local\Programs\Python\Python*" ) do set P
 set PATH=%PATH%;%ProgramFiles%\7-Zip
 
 
+cd ..
+if ERRORLEVEL 1 goto error_basedir
+
+
 call :detect_version
 set distdir=%project%-win64-standalone-%version%
 set sfxfile=%project%-win64-%version%.package.exe
@@ -76,8 +80,8 @@ exit /B 0
 :gen_startup_wrapper
 	echo === Generating startup wrapper
 	set wrapper=%distdir%\%project%.cmd
-	echo @set PATH=%bindirname%;%bindirname%\lib;%bindirname%\platforms;%bindirname%\imageformats;%%PATH%% > %wrapper%
-	echo @start %project%-bin\%project%.exe %%1 %%2 %%3 %%4 %%5 %%6 %%7 %%8 %%9 >> %wrapper%
+	echo @set PATH=%bindirname%;%bindirname%\lib;%%PATH%% > %wrapper%
+	echo @start %bindirname%\%project%.exe %%1 %%2 %%3 %%4 %%5 %%6 %%7 %%8 %%9 >> %wrapper%
 	if ERRORLEVEL 1 goto error_wrapper
 	exit /B 0
 
