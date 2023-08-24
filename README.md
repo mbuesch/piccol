@@ -9,6 +9,26 @@ Color picker and translator.
 
 [Github repository](https://github.com/mbuesch/piccol)
 
+
+Description
+-----------
+
+Piccol is a graphical tool to pick a pixel color from anywhere on the screen and then show the color details as
+
+* RGB decimal notation
+* RGB hex notation
+* HLS decimal notation
+* and as written text (e.g. "very saturated light blue")
+
+The RGB and HLS values can also be altered via sliders to create a correspondingly colored pixel.
+
+
+Image import
+------------
+
+Images can be imported to piccol to analyze the image pixels.
+
+
 License / Copyright
 -------------------
 
